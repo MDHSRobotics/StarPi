@@ -16,11 +16,16 @@ import edu.wpi.cscore.MjpegServer;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.vision.VisionThread;
 
-import org.opencv.core.Mat;
+import org.opencv.core.*;
+import org.opencv.imgproc.*;
+
+
 
 /*
 JSON format:
@@ -59,7 +64,7 @@ JSON format:
 
 public final class Main {
     private static String configFile = "/boot/frc.json";
-    // private static String configFile = "C:\\dev\\SpaceBot\\rPi\\frc.json";
+    // private static String configFile = "C:\\dev\\SpacePi\\rPi\\frc.json";
 
     @SuppressWarnings("MemberName")
     public static class CameraConfig {
@@ -191,18 +196,6 @@ public final class Main {
 
         return camera;
     }
-
-    // /**
-    //    * Example pipeline.
-    //    */
-    // public static class MyPipeline implements VisionPipeline {
-    //     public int val;
-
-    //     @Override
-    //     public void process(Mat mat) {
-    //         val += 1;
-    //     }
-    // }
 
     /**
     * LinePipeline class.
@@ -415,7 +408,6 @@ public final class Main {
         public static double hatchLineAngleDefault = 0;
         public static double hatchLineXcenterDefault = 0;
         public static double hatchLineYcenterDefault = 0;
-        public static boolean hatchLineDetectedDefault = false;
 
         //---------------------//
         // NetworkTableEntries //
@@ -434,42 +426,11 @@ public final class Main {
         public static NetworkTableEntry hatchLineAngleEntry;
         public static NetworkTableEntry hatchLineXcenterEntry;
         public static NetworkTableEntry hatchLineYcenterEntry;
-        public static NetworkTableEntry hatchLineDetectedEntry;
 
         //---------//
         // Setters //
         //---------//
 
-        // Vision - LinePipeline
-        public static void setHueMin(NetworkTableEntry entry) {
-            double value = entry.getDouble(hueMinDefault);
-            hueMinEntry.setDouble(value);
-        }
-
-        public static void setHueMax(NetworkTableEntry entry) {
-            double value = entry.getDouble(hueMaxDefault);
-            hueMaxEntry.setDouble(value);
-        }
-
-        public static void setSaturationMin(NetworkTableEntry entry) {
-            double value = entry.getDouble(saturationMinDefault);
-            saturationMinEntry.setDouble(value);
-        }
-
-        public static void setSaturationMax(NetworkTableEntry entry) {
-            double value = entry.getDouble(saturationMaxDefault);
-            saturationMaxEntry.setDouble(value);
-        }
-
-        public static void setValueMin(NetworkTableEntry entry) {
-            double value = entry.getDouble(valueMinDefault);
-            valueMinEntry.setDouble(value);
-        }
-
-        public static void setValueMax(NetworkTableEntry entry) {
-            double value = entry.getDouble(valueMaxDefault);
-            valueMaxEntry.setDouble(value);
-        }
 
         // Vision - LineDetector
         public static void setHatchLineArea(NetworkTableEntry entry) {
@@ -508,11 +469,6 @@ public final class Main {
             hatchLineYcenterEntry.setDouble(value);
         }
 
-        public static void setHatchLineDetected() {
-            boolean detected = Robot.robotLineDetectorHatch.lineDetected();
-            hatchLineDetectedEntry.setBoolean(detected);
-        }
-
 
         //---------//
         // Getters //
@@ -544,6 +500,34 @@ public final class Main {
         }
     }
 
+    public enum Quadrant {
+        UPPERLEFT, UPPERRIGHT, LOWERLEFT, LOWERRIGHT;
+
+        public static int totalHeight = 320;
+        public static int totalWidth = 240;
+
+        public static Quadrant getQuadrant(double x, double y) {
+            boolean isUpper = (y <= totalHeight / 2);
+            boolean isLeft = (x <= totalWidth / 2);
+            if (isUpper) {
+                if (isLeft) {
+                    return UPPERLEFT;
+                }
+                else {
+                    return UPPERRIGHT;
+                }
+            }
+            else {
+                if (isLeft) {
+                    return LOWERLEFT;
+                }
+                else {
+                    return LOWERRIGHT;
+                }
+            }
+        }
+    }
+
     /**
      * Main.
      */
@@ -567,22 +551,22 @@ public final class Main {
             ntinst.startClientTeam(team);
         }
 
-        NetworkTable shuffleboardTable = ntinst.getTable("Shuffleboard");
-        NetworkTable visionTable = shuffleboardTable.getTable("Vision");
-        hueMinEntry = visionTable.getEntry("Hue Minimum");
-        hueMaxEntry = visionTable.getEntry("Hue Maximum");
-        saturationMinEntry = visionTable.getEntry("Saturation Minimum");
-        saturationMaxEntry = visionTable.getEntry("Saturation Maximum");
-        valueMinEntry = visionTable.getEntry("Value Minimum");
-        valueMaxEntry = visionTable.getEntry("Value Maximum");
+        NetworkTable visionTable = ntinst.getTable("Shuffleboard/Vision");
+        Brain.hueMinEntry = visionTable.getEntry("Hue Minimum");
+        Brain.hueMaxEntry = visionTable.getEntry("Hue Maximum");
+        Brain.saturationMinEntry = visionTable.getEntry("Saturation Minimum");
+        Brain.saturationMaxEntry = visionTable.getEntry("Saturation Maximum");
+        Brain.valueMinEntry = visionTable.getEntry("Value Minimum");
+        Brain.valueMaxEntry = visionTable.getEntry("Value Maximum");
 
         // start cameras
-         List<VideoSource> cameras = new ArrayList<>();
+        List<VideoSource> cameras = new ArrayList<>();
         for (CameraConfig cameraConfig : cameraConfigs) {
             cameras.add(startCamera(cameraConfig));
         }
 
         // start image processing on camera 0 if present
+        double minimumArea = (Quadrant.totalHeight / 3) ^ 2;
         if (cameras.size() >= 1) {
             VisionThread visionThread = new VisionThread(cameras.get(0), new LinePipeline(), pipeline -> {
                 ArrayList<MatOfPoint> output = pipeline.filterContoursOutput();
@@ -599,7 +583,7 @@ public final class Main {
 
                     // Get the area of the rotated rectangle
                     double area = rotRect.size.area();
-                    if (area >= m_minimumArea) {
+                    if (area >= minimumArea) {
                         // Get the center X & Y of the bounding rectangle
                         Rect boundRect = rotRect.boundingRect();
                         double centerX = boundRect.x + (boundRect.width / 2);
@@ -610,19 +594,19 @@ public final class Main {
                         if (rotRect.size.width < rotRect.size.height) {
                             angle = 90 + angle;
                         }
-                        // Quadrant centerQuad = getQuadrant(centerX, centerY);
-                        // switch (centerQuad) {
-                        //     case UPPERLEFT:
-                        //             break;
-                        //     case UPPERRIGHT:
-                        //             break;
-                        //     case LOWERLEFT:
-                        //             if (angle > 0) angle = angle - 180;
-                        //             break;
-                        //     case LOWERRIGHT:
-                        //             if (angle < 0) angle = angle + 180;
-                        //             break;
-                        // }
+                        Quadrant centerQuad = Quadrant.getQuadrant(centerX, centerY);
+                        switch (centerQuad) {
+                            case UPPERLEFT:
+                                    break;
+                            case UPPERRIGHT:
+                                    break;
+                            case LOWERLEFT:
+                                    if (angle > 0) angle = angle - 180;
+                                    break;
+                            case LOWERRIGHT:
+                                    if (angle < 0) angle = angle + 180;
+                                    break;
+                        }
 
                         // Add the values to NetworkTables via the Brain
                         Brain.setHatchLineArea(area);
@@ -643,12 +627,6 @@ public final class Main {
                     // TODO: consider checking all the contours, and if only one meets the minimum area requirements, use that
                 }
             });
-            /* something like this for GRIP:
-            VisionThread visionThread = new VisionThread(cameras.get(0),
-                            new GripPipeline(), pipeline -> {
-                ...
-            });
-             */
             visionThread.start();
         }
 
