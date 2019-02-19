@@ -1,0 +1,10 @@
+{
+    "team": 4141,
+    "ntmode": "client"
+    "cameras": [
+        {
+            "name": "Front Camera"
+            "path": "/dev/video0"
+        }
+    ]
+}
