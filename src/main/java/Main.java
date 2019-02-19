@@ -431,44 +431,22 @@ public final class Main {
         // Setters //
         //---------//
 
-
         // Vision - LineDetector
-        public static void setHatchLineArea(NetworkTableEntry entry) {
-            double value = entry.getDouble(hatchLineAreaDefault);
-            hatchLineAreaEntry.setDouble(value);
-        }
-
         public static void setHatchLineArea(double value) {
             hatchLineAreaEntry.setDouble(value);
-        }
-
-        public static void setHatchLineAngle(NetworkTableEntry entry) {
-            double value = entry.getDouble(hatchLineAngleDefault);
-            hatchLineAngleEntry.setDouble(value);
         }
 
         public static void setHatchLineAngle(double value) {
             hatchLineAngleEntry.setDouble(value);
         }
 
-        public static void setHatchLineXcenter(NetworkTableEntry entry) {
-            double value = entry.getDouble(hatchLineXcenterDefault);
-            hatchLineXcenterEntry.setDouble(value);
-        }
-
         public static void setHatchLineXcenter(double value) {
             hatchLineXcenterEntry.setDouble(value);
-        }
-
-        public static void setHatchLineYcenter(NetworkTableEntry entry) {
-            double value = entry.getDouble(hatchLineYcenterDefault);
-            hatchLineYcenterEntry.setDouble(value);
         }
 
         public static void setHatchLineYcenter(double value) {
             hatchLineYcenterEntry.setDouble(value);
         }
-
 
         //---------//
         // Getters //
