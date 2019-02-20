@@ -21,6 +21,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.vision.VisionThread;
+import edu.wpi.first.wpilibj.Timer;
 
 import org.opencv.core.*;
 import org.opencv.imgproc.*;
@@ -404,10 +405,13 @@ public final class Main {
         public static double valueMaxDefault = 255;
 
         // Vision - LineDetector
-        public static double hatchLineAreaDefault = 0;
-        public static double hatchLineAngleDefault = 0;
-        public static double hatchLineXcenterDefault = 0;
-        public static double hatchLineYcenterDefault = 0;
+        public static double frontLineContoursDefault = 0;
+        public static double frontLineAreaDefault = 0;
+        public static double frontLineAngleDefault = 0;
+        public static double frontLineXcenterDefault = 0;
+        public static double frontLineYcenterDefault = 0;
+
+        public static double piTime = 0;
 
         //---------------------//
         // NetworkTableEntries //
@@ -422,30 +426,41 @@ public final class Main {
         public static NetworkTableEntry valueMaxEntry;
 
         // Vision - LineDetector
-        public static NetworkTableEntry hatchLineAreaEntry;
-        public static NetworkTableEntry hatchLineAngleEntry;
-        public static NetworkTableEntry hatchLineXcenterEntry;
-        public static NetworkTableEntry hatchLineYcenterEntry;
+        public static NetworkTableEntry frontLineContoursEntry;
+        public static NetworkTableEntry frontLineAreaEntry;
+        public static NetworkTableEntry frontLineAngleEntry;
+        public static NetworkTableEntry frontLineXcenterEntry;
+        public static NetworkTableEntry frontLineYcenterEntry;
+
+        public static NetworkTableEntry piTimeEntry;
 
         //---------//
         // Setters //
         //---------//
 
         // Vision - LineDetector
-        public static void setHatchLineArea(double value) {
-            hatchLineAreaEntry.setDouble(value);
+        public static void setFrontLineContours(double value) {
+            frontLineContoursEntry.setDouble(value);
         }
 
-        public static void setHatchLineAngle(double value) {
-            hatchLineAngleEntry.setDouble(value);
+        public static void setFrontLineArea(double value) {
+            frontLineAreaEntry.setDouble(value);
         }
 
-        public static void setHatchLineXcenter(double value) {
-            hatchLineXcenterEntry.setDouble(value);
+        public static void setFrontLineAngle(double value) {
+            frontLineAngleEntry.setDouble(value);
         }
 
-        public static void setHatchLineYcenter(double value) {
-            hatchLineYcenterEntry.setDouble(value);
+        public static void setFrontLineXcenter(double value) {
+            frontLineXcenterEntry.setDouble(value);
+        }
+
+        public static void setFrontLineYcenter(double value) {
+            frontLineYcenterEntry.setDouble(value);
+        }
+
+        public static void setPiTime(double value) {
+            piTimeEntry.setDouble(value);
         }
 
         //---------//
@@ -481,8 +496,8 @@ public final class Main {
     public enum Quadrant {
         UPPERLEFT, UPPERRIGHT, LOWERLEFT, LOWERRIGHT;
 
-        public static int totalHeight = 320;
-        public static int totalWidth = 240;
+        public static int totalHeight = 160;
+        public static int totalWidth = 120;
 
         public static Quadrant getQuadrant(double x, double y) {
             boolean isUpper = (y <= totalHeight / 2);
@@ -530,12 +545,24 @@ public final class Main {
         }
 
         NetworkTable visionTable = ntinst.getTable("Shuffleboard/Vision");
+
         Brain.hueMinEntry = visionTable.getEntry("Hue Minimum");
         Brain.hueMaxEntry = visionTable.getEntry("Hue Maximum");
         Brain.saturationMinEntry = visionTable.getEntry("Saturation Minimum");
         Brain.saturationMaxEntry = visionTable.getEntry("Saturation Maximum");
         Brain.valueMinEntry = visionTable.getEntry("Value Minimum");
         Brain.valueMaxEntry = visionTable.getEntry("Value Maximum");
+
+        Brain.frontLineContoursEntry = visionTable.getEntry("Front Line Contours");
+        Brain.frontLineAreaEntry = visionTable.getEntry("Front Line Area");
+        Brain.frontLineAngleEntry = visionTable.getEntry("Front Line Angle");
+        Brain.frontLineXcenterEntry = visionTable.getEntry("Front Line Center X");
+        Brain.frontLineYcenterEntry = visionTable.getEntry("Front Line Center Y");
+
+        Brain.piTimeEntry = visionTable.getEntry("Pi Time");
+        Timer piTimer = new Timer();
+        piTimer.reset();
+        piTimer.start();
 
         // start cameras
         List<VideoSource> cameras = new ArrayList<>();
@@ -545,10 +572,14 @@ public final class Main {
 
         // start image processing on camera 0 if present
         double minimumArea = (Quadrant.totalHeight / 3) ^ 2;
-        if (cameras.size() >= 1) {
+        System.out.println("Minimum Area: " + minimumArea);
+        int numOfCameras = cameras.size();
+        System.out.println("Number of cameras: " + numOfCameras);
+        if (numOfCameras >= 1) {
             VisionThread visionThread = new VisionThread(cameras.get(0), new LinePipeline(), pipeline -> {
                 ArrayList<MatOfPoint> output = pipeline.filterContoursOutput();
                 int outputSize = output.size();
+                Brain.setFrontLineContours(outputSize);
                 // We can only work with one contour
                 if (outputSize == 1) {
                     System.out.println("One contour identified, checking minimum size...");
@@ -587,23 +618,25 @@ public final class Main {
                         }
 
                         // Add the values to NetworkTables via the Brain
-                        Brain.setHatchLineArea(area);
-                        Brain.setHatchLineAngle(angle);
-                        Brain.setHatchLineXcenter(centerX);
-                        Brain.setHatchLineYcenter(centerY);
+                        Brain.setFrontLineArea(area);
+                        Brain.setFrontLineAngle(angle);
+                        Brain.setFrontLineXcenter(centerX);
+                        Brain.setFrontLineYcenter(centerY);
 
                         System.out.println("Line Detected!");
                     }
                 }
                 else {
                     // We can't work with these contours, so set everything to default
-                    Brain.setHatchLineArea(Brain.hatchLineAreaDefault);
-                    Brain.setHatchLineAngle(Brain.hatchLineAngleDefault);
-                    Brain.setHatchLineXcenter(Brain.hatchLineXcenterDefault);
-                    Brain.setHatchLineYcenter(Brain.hatchLineYcenterDefault);
+                    Brain.setFrontLineArea(Brain.frontLineAreaDefault);
+                    Brain.setFrontLineAngle(Brain.frontLineAngleDefault);
+                    Brain.setFrontLineXcenter(Brain.frontLineXcenterDefault);
+                    Brain.setFrontLineYcenter(Brain.frontLineYcenterDefault);
 
                     // TODO: consider checking all the contours, and if only one meets the minimum area requirements, use that
                 }
+                double elapsedTime = piTimer.get();
+                Brain.setPiTime(elapsedTime);
             });
             visionThread.start();
         }
