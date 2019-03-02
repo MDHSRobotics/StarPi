@@ -1,10 +1,18 @@
 {
     "team": 4141,
-    "ntmode": "client"
+    "ntmode": "client",
     "cameras": [
         {
-            "name": "Front Camera"
+            "name": "Front Camera",
             "path": "/dev/video0"
+        },
+        {
+            "name": "Left Camera",
+            "path": "/dev/video1"
+        },
+        {
+            "name": "Right Camera",
+            "path": "/dev/video2"
         }
     ]
 }

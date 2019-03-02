@@ -396,7 +396,7 @@ public final class Main {
         // Default Values //
         //----------------//
 
-        // Vision - LinePipeline
+        // Vision - Line Pipeline
         public static double hueMinDefault = 0;
         public static double hueMaxDefault = 180;
         public static double saturationMinDefault = 0;
@@ -404,20 +404,35 @@ public final class Main {
         public static double valueMinDefault = 232;
         public static double valueMaxDefault = 255;
 
-        // Vision - LineDetector
+        // Vision - Front Line Detector
         public static double frontLineContoursDefault = 0;
         public static double frontLineAreaDefault = 0;
         public static double frontLineAngleDefault = 0;
         public static double frontLineXcenterDefault = 0;
         public static double frontLineYcenterDefault = 0;
+        public static double frontPiTime = 0;
 
-        public static double piTime = 0;
+        // Vision - Left Line Detector
+        public static double leftLineContoursDefault = 0;
+        public static double leftLineAreaDefault = 0;
+        public static double leftLineAngleDefault = 0;
+        public static double leftLineXcenterDefault = 0;
+        public static double leftLineYcenterDefault = 0;
+        public static double leftPiTime = 0;
+
+        // Vision - Right Line Detector
+        public static double rightLineContoursDefault = 0;
+        public static double rightLineAreaDefault = 0;
+        public static double rightLineAngleDefault = 0;
+        public static double rightLineXcenterDefault = 0;
+        public static double rightLineYcenterDefault = 0;
+        public static double rightPiTime = 0;
 
         //---------------------//
         // NetworkTableEntries //
         //---------------------//
 
-        // Vision - LinePipeline
+        // Vision - Line Pipeline
         public static NetworkTableEntry hueMinEntry;
         public static NetworkTableEntry hueMaxEntry;
         public static NetworkTableEntry saturationMinEntry;
@@ -425,20 +440,35 @@ public final class Main {
         public static NetworkTableEntry valueMinEntry;
         public static NetworkTableEntry valueMaxEntry;
 
-        // Vision - LineDetector
+        // Vision - Front Line Detector
         public static NetworkTableEntry frontLineContoursEntry;
         public static NetworkTableEntry frontLineAreaEntry;
         public static NetworkTableEntry frontLineAngleEntry;
         public static NetworkTableEntry frontLineXcenterEntry;
         public static NetworkTableEntry frontLineYcenterEntry;
+        public static NetworkTableEntry frontPiTimeEntry;
 
-        public static NetworkTableEntry piTimeEntry;
+        // Vision - Left Line Detector
+        public static NetworkTableEntry leftLineContoursEntry;
+        public static NetworkTableEntry leftLineAreaEntry;
+        public static NetworkTableEntry leftLineAngleEntry;
+        public static NetworkTableEntry leftLineXcenterEntry;
+        public static NetworkTableEntry leftLineYcenterEntry;
+        public static NetworkTableEntry leftPiTimeEntry;
+
+        // Vision - Right Line Detector
+        public static NetworkTableEntry rightLineContoursEntry;
+        public static NetworkTableEntry rightLineAreaEntry;
+        public static NetworkTableEntry rightLineAngleEntry;
+        public static NetworkTableEntry rightLineXcenterEntry;
+        public static NetworkTableEntry rightLineYcenterEntry;
+        public static NetworkTableEntry rightPiTimeEntry;
 
         //---------//
         // Setters //
         //---------//
 
-        // Vision - LineDetector
+        // Vision - Front Line Detector
         public static void setFrontLineContours(double value) {
             frontLineContoursEntry.setDouble(value);
         }
@@ -459,8 +489,58 @@ public final class Main {
             frontLineYcenterEntry.setDouble(value);
         }
 
-        public static void setPiTime(double value) {
-            piTimeEntry.setDouble(value);
+        public static void setFrontPiTime(double value) {
+            frontPiTimeEntry.setDouble(value);
+        }
+
+        // Vision - Left Line Detector
+        public static void setLeftLineContours(double value) {
+            leftLineContoursEntry.setDouble(value);
+        }
+
+        public static void setLeftLineArea(double value) {
+            leftLineAreaEntry.setDouble(value);
+        }
+
+        public static void setLeftLineAngle(double value) {
+            leftLineAngleEntry.setDouble(value);
+        }
+
+        public static void setLeftLineXcenter(double value) {
+            leftLineXcenterEntry.setDouble(value);
+        }
+
+        public static void setLeftLineYcenter(double value) {
+            leftLineYcenterEntry.setDouble(value);
+        }
+
+        public static void setLeftPiTime(double value) {
+            leftPiTimeEntry.setDouble(value);
+        }
+
+        // Vision - Left Line Detector
+        public static void setRightLineContours(double value) {
+            rightLineContoursEntry.setDouble(value);
+        }
+
+        public static void setRightLineArea(double value) {
+            rightLineAreaEntry.setDouble(value);
+        }
+
+        public static void setRightLineAngle(double value) {
+            rightLineAngleEntry.setDouble(value);
+        }
+
+        public static void setRightLineXcenter(double value) {
+            rightLineXcenterEntry.setDouble(value);
+        }
+
+        public static void setRightLineYcenter(double value) {
+            rightLineYcenterEntry.setDouble(value);
+        }
+
+        public static void setRightPiTime(double value) {
+            rightPiTimeEntry.setDouble(value);
         }
 
         //---------//
@@ -521,6 +601,114 @@ public final class Main {
         }
     }
 
+    public enum CameraPosition {
+        FRONT, LEFT, RIGHT
+    }
+
+    public static void startLineDetection(VideoSource cam, double minimumArea, CameraPosition camPosition) {
+        Timer piTimer = new Timer();
+        piTimer.reset();
+        piTimer.start();
+
+        VisionThread visionThread = new VisionThread(cam, new LinePipeline(), pipeline -> {
+            double elapsedTime = piTimer.get();
+            switch (camPosition) {
+                case FRONT:
+                    Brain.setFrontPiTime(elapsedTime);
+                case LEFT:
+                    Brain.setLeftPiTime(elapsedTime);
+                case RIGHT:
+                    Brain.setRightPiTime(elapsedTime);
+            }
+
+            ArrayList<MatOfPoint> output = pipeline.filterContoursOutput();
+            int outputSize = output.size();
+            Brain.setFrontLineContours(outputSize);
+            // We can only work with one contour
+            if (outputSize == 1) {
+                String camName = cam.getName();
+                System.out.println(elapsedTime + " : " + camName + " -> One contour identified, checking minimum size...");
+                MatOfPoint contour = output.get(0);
+
+                // Get the rotated rectangle
+                Point[] points = contour.toArray();
+                MatOfPoint2f contour2f = new MatOfPoint2f(points);
+                RotatedRect rotRect = Imgproc.minAreaRect(contour2f);
+
+                // Get the area of the rotated rectangle
+                double area = rotRect.size.area();
+                if (area >= minimumArea) {
+                    // Get the center X & Y of the bounding rectangle
+                    Rect boundRect = rotRect.boundingRect();
+                    double centerX = boundRect.x + (boundRect.width / 2);
+                    double centerY = boundRect.y + (boundRect.height / 2);
+
+                    // Get the rotation angle of the rotated rectangle
+                    double angle = rotRect.angle;
+                    if (rotRect.size.width < rotRect.size.height) {
+                        angle = 90 + angle;
+                    }
+                    Quadrant centerQuad = Quadrant.getQuadrant(centerX, centerY);
+                    switch (centerQuad) {
+                        case UPPERLEFT:
+                                break;
+                        case UPPERRIGHT:
+                                break;
+                        case LOWERLEFT:
+                                if (angle > 0) angle = angle - 180;
+                                break;
+                        case LOWERRIGHT:
+                                if (angle < 0) angle = angle + 180;
+                                break;
+                    }
+
+                    // Add the values to NetworkTables via the Brain
+                    switch (camPosition) {
+                        case FRONT:
+                            Brain.setFrontLineArea(area);
+                            Brain.setFrontLineAngle(angle);
+                            Brain.setFrontLineXcenter(centerX);
+                            Brain.setFrontLineYcenter(centerY);
+                        case LEFT:
+                            Brain.setLeftLineArea(area);
+                            Brain.setLeftLineAngle(angle);
+                            Brain.setLeftLineXcenter(centerX);
+                            Brain.setLeftLineYcenter(centerY);
+                        case RIGHT:
+                            Brain.setRightLineArea(area);
+                            Brain.setRightLineAngle(angle);
+                            Brain.setRightLineXcenter(centerX);
+                            Brain.setRightLineYcenter(centerY);
+                    }
+                    System.out.println(elapsedTime + " : " + camName + " -> Line Detected!");
+                }
+            }
+            else {
+                // We can't work with these contours, so set everything to default
+                switch (camPosition) {
+                    case FRONT:
+                        Brain.setFrontLineArea(Brain.frontLineAreaDefault);
+                        Brain.setFrontLineAngle(Brain.frontLineAngleDefault);
+                        Brain.setFrontLineXcenter(Brain.frontLineXcenterDefault);
+                        Brain.setFrontLineYcenter(Brain.frontLineYcenterDefault);
+                    case LEFT:
+                        Brain.setLeftLineArea(Brain.leftLineAreaDefault);
+                        Brain.setLeftLineAngle(Brain.leftLineAngleDefault);
+                        Brain.setLeftLineXcenter(Brain.leftLineXcenterDefault);
+                        Brain.setLeftLineYcenter(Brain.leftLineYcenterDefault);
+                    case RIGHT:
+                        Brain.setRightLineArea(Brain.rightLineAreaDefault);
+                        Brain.setRightLineAngle(Brain.rightLineAngleDefault);
+                        Brain.setRightLineXcenter(Brain.rightLineXcenterDefault);
+                        Brain.setRightLineYcenter(Brain.rightLineYcenterDefault);
+                }
+
+                // TODO: consider checking all the contours, and if only one meets the minimum area requirements, use that
+            }
+        });
+        visionThread.start();
+    }
+
     /**
      * Main.
      */
@@ -558,11 +746,21 @@ public final class Main {
         Brain.frontLineAngleEntry = visionTable.getEntry("Front Line Angle");
         Brain.frontLineXcenterEntry = visionTable.getEntry("Front Line Center X");
         Brain.frontLineYcenterEntry = visionTable.getEntry("Front Line Center Y");
+        Brain.frontPiTimeEntry = visionTable.getEntry("Front Pi Time");
 
-        Brain.piTimeEntry = visionTable.getEntry("Pi Time");
-        Timer piTimer = new Timer();
-        piTimer.reset();
-        piTimer.start();
+        Brain.leftLineContoursEntry = visionTable.getEntry("Left Line Contours");
+        Brain.leftLineAreaEntry = visionTable.getEntry("Left Line Area");
+        Brain.leftLineAngleEntry = visionTable.getEntry("Left Line Angle");
+        Brain.leftLineXcenterEntry = visionTable.getEntry("Left Line Center X");
+        Brain.leftLineYcenterEntry = visionTable.getEntry("Left Line Center Y");
+        Brain.leftPiTimeEntry = visionTable.getEntry("Left Pi Time");
+
+        Brain.rightLineContoursEntry = visionTable.getEntry("Right Line Contours");
+        Brain.rightLineAreaEntry = visionTable.getEntry("Right Line Area");
+        Brain.rightLineAngleEntry = visionTable.getEntry("Right Line Angle");
+        Brain.rightLineXcenterEntry = visionTable.getEntry("Right Line Center X");
+        Brain.rightLineYcenterEntry = visionTable.getEntry("Right Line Center Y");
+        Brain.rightPiTimeEntry = visionTable.getEntry("Right Pi Time");
 
         // start cameras
         List<VideoSource> cameras = new ArrayList<>();
@@ -575,71 +773,9 @@ public final class Main {
         System.out.println("Minimum Area: " + minimumArea);
         int numOfCameras = cameras.size();
         System.out.println("Number of cameras: " + numOfCameras);
-        if (numOfCameras >= 1) {
-            VisionThread visionThread = new VisionThread(cameras.get(0), new LinePipeline(), pipeline -> {
-                ArrayList<MatOfPoint> output = pipeline.filterContoursOutput();
-                int outputSize = output.size();
-                Brain.setFrontLineContours(outputSize);
-                // We can only work with one contour
-                if (outputSize == 1) {
-                    System.out.println("One contour identified, checking minimum size...");
-                    MatOfPoint contour = output.get(0);
-
-                    // Get the rotated rectangle
-                    Point[] points = contour.toArray();
-                    MatOfPoint2f contour2f = new MatOfPoint2f(points);
-                    RotatedRect rotRect = Imgproc.minAreaRect(contour2f);
-
-                    // Get the area of the rotated rectangle
-                    double area = rotRect.size.area();
-                    if (area >= minimumArea) {
-                        // Get the center X & Y of the bounding rectangle
-                        Rect boundRect = rotRect.boundingRect();
-                        double centerX = boundRect.x + (boundRect.width / 2);
-                        double centerY = boundRect.y + (boundRect.height / 2);
-
-                        // Get the rotation angle of the rotated rectangle
-                        double angle = rotRect.angle;
-                        if (rotRect.size.width < rotRect.size.height) {
-                            angle = 90 + angle;
-                        }
-                        Quadrant centerQuad = Quadrant.getQuadrant(centerX, centerY);
-                        switch (centerQuad) {
-                            case UPPERLEFT:
-                                    break;
-                            case UPPERRIGHT:
-                                    break;
-                            case LOWERLEFT:
-                                    if (angle > 0) angle = angle - 180;
-                                    break;
-                            case LOWERRIGHT:
-                                    if (angle < 0) angle = angle + 180;
-                                    break;
-                        }
-
-                        // Add the values to NetworkTables via the Brain
-                        Brain.setFrontLineArea(area);
-                        Brain.setFrontLineAngle(angle);
-                        Brain.setFrontLineXcenter(centerX);
-                        Brain.setFrontLineYcenter(centerY);
-
-                        System.out.println("Line Detected!");
-                    }
-                }
-                else {
-                    // We can't work with these contours, so set everything to default
-                    Brain.setFrontLineArea(Brain.frontLineAreaDefault);
-                    Brain.setFrontLineAngle(Brain.frontLineAngleDefault);
-                    Brain.setFrontLineXcenter(Brain.frontLineXcenterDefault);
-                    Brain.setFrontLineYcenter(Brain.frontLineYcenterDefault);
-
-                    // TODO: consider checking all the contours, and if only one meets the minimum area requirements, use that
-                }
-                double elapsedTime = piTimer.get();
-                Brain.setPiTime(elapsedTime);
-            });
-            visionThread.start();
-        }
+        startLineDetection(cameras.get(0), minimumArea, CameraPosition.FRONT);
+        startLineDetection(cameras.get(1), minimumArea, CameraPosition.LEFT);
+        startLineDetection(cameras.get(2), minimumArea, CameraPosition.RIGHT);
 
         // loop forever
         for (;;) {
