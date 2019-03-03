@@ -18,13 +18,7 @@ repositories {
 dependencies {
     compile 'com.google.code.gson:gson:2.8.5'
 
-    compile name: 'wpiutil'
-    compile name: 'ntcore'
-    compile name: 'cscore'
-    compile name: 'cameraserver'
-    compile name: 'opencv-344'
-    compile name: 'wpilibj'
-    compile name: 'wpiHal'
+    runtime fileTree('lib') { include '*.jar' }
 }
 
 wrapper {
