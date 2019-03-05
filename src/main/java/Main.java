@@ -946,19 +946,22 @@ public final class Main {
         startLineDetection(cameras.get(2), minimumArea, CameraPosition.RIGHT);
         startLineDetection(cameras.get(3), minimumArea, CameraPosition.REAR);
 
-        // start the distance sensor
-        Pin echoPin = RaspiPin.GPIO_20; // PI4J custom numbering (pin 20)
-        Pin trigPin = RaspiPin.GPIO_18; // PI4J custom numbering (pin 18)
-        DistanceMonitor monitor = new DistanceMonitor( echoPin, trigPin );
+        // TODO: Need to figure out how to install this on the raspberry pi:
+        // http://wiringpi.com/download-and-install/
+
+        // // start the distance sensor
+        // Pin echoPin = RaspiPin.GPIO_20; // PI4J custom numbering (pin 20)
+        // Pin trigPin = RaspiPin.GPIO_18; // PI4J custom numbering (pin 18)
+        // DistanceMonitor monitor = new DistanceMonitor( echoPin, trigPin );
 
         // loop forever
         for (;;) {
-            try {
-                System.out.printf( "%1$d,%2$.3f%n", System.currentTimeMillis(), monitor.measureDistance() );
-            }
-            catch( TimeoutException e ) {
-                System.err.println( e );
-            }
+            // try {
+            //     System.out.printf( "%1$d,%2$.3f%n", System.currentTimeMillis(), monitor.measureDistance() );
+            // }
+            // catch( TimeoutException e ) {
+            //     System.err.println( e );
+            // }
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException ex) {
