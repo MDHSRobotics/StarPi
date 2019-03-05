@@ -18,7 +18,18 @@ repositories {
 dependencies {
     compile 'com.google.code.gson:gson:2.8.5'
 
-    runtime fileTree('lib') { include '*.jar' }
+    compile name: 'cameraserver'
+    compile name: 'cscore'
+    compile name: 'junit'
+    compile name: 'ntcore'
+    compile name: 'opencv-344'
+    compile name: 'pi4j-core'
+    compile name: 'pi4j-device'
+    compile name: 'pi4j-example'
+    compile name: 'pi4j-gpio-extension'
+    compile name: 'wpiHal'
+    compile name: 'wpilibj'
+    compile name: 'wpiutil'
 }
 
 wrapper {
