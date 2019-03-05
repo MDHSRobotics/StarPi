@@ -612,7 +612,7 @@ public final class Main {
     }
 
     public enum CameraPosition {
-        FRONT, LEFT, RIGHT, REAR
+        FRONT, LEFT, RIGHT
     }
 
     public static void startLineDetection(VideoSource cam, double minimumArea, CameraPosition camPosition) {
@@ -862,6 +862,13 @@ public final class Main {
         Brain.leftLineXcenterEntry = visionTable.getEntry("Left Line Center X");
         Brain.leftLineYcenterEntry = visionTable.getEntry("Left Line Center Y");
         Brain.leftPiTimeEntry = visionTable.getEntry("Left Pi Time");
+
+        Brain.rightLineContoursEntry = visionTable.getEntry("Right Line Contours");
+        Brain.rightLineAreaEntry = visionTable.getEntry("Right Line Area");
+        Brain.rightLineAngleEntry = visionTable.getEntry("Right Line Angle");
+        Brain.rightLineXcenterEntry = visionTable.getEntry("Right Line Center X");
+        Brain.rightLineYcenterEntry = visionTable.getEntry("Right Line Center Y");
+        Brain.rightPiTimeEntry = visionTable.getEntry("Right Pi Time");
 
         // start cameras
         List<VideoSource> cameras = new ArrayList<>();
