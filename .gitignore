@@ -162,3 +162,4 @@ bin/
 
 # Avoid ignoring .jar files in lib
 !lib/*.jar
+!lib/*.tar.gz
