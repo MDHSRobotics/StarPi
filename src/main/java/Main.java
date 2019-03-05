@@ -840,35 +840,37 @@ public final class Main {
             ntinst.startClientTeam(team);
         }
 
-        NetworkTable visionTable = ntinst.getTable("Shuffleboard/Vision");
+        NetworkTable hsvTable = ntinst.getTable("Shuffleboard/Vision/HSV Thresholds");
+        Brain.hueMinEntry = hsvTable.getEntry("Hue Minimum");
+        Brain.hueMaxEntry = hsvTable.getEntry("Hue Maximum");
+        Brain.saturationMinEntry = hsvTable.getEntry("Saturation Minimum");
+        Brain.saturationMaxEntry = hsvTable.getEntry("Saturation Maximum");
+        Brain.valueMinEntry = hsvTable.getEntry("Value Minimum");
+        Brain.valueMaxEntry = hsvTable.getEntry("Value Maximum");
 
-        Brain.hueMinEntry = visionTable.getEntry("Hue Minimum");
-        Brain.hueMaxEntry = visionTable.getEntry("Hue Maximum");
-        Brain.saturationMinEntry = visionTable.getEntry("Saturation Minimum");
-        Brain.saturationMaxEntry = visionTable.getEntry("Saturation Maximum");
-        Brain.valueMinEntry = visionTable.getEntry("Value Minimum");
-        Brain.valueMaxEntry = visionTable.getEntry("Value Maximum");
+        NetworkTable frontCameraTable = ntinst.getTable("Shuffleboard/Vision/Front Camera");
+        Brain.frontLineContoursEntry = frontCameraTable.getEntry("Front Line Contours");
+        Brain.frontLineAreaEntry = frontCameraTable.getEntry("Front Line Area");
+        Brain.frontLineAngleEntry = frontCameraTable.getEntry("Front Line Angle");
+        Brain.frontLineXcenterEntry = frontCameraTable.getEntry("Front Line Center X");
+        Brain.frontLineYcenterEntry = frontCameraTable.getEntry("Front Line Center Y");
+        Brain.frontPiTimeEntry = frontCameraTable.getEntry("Front Pi Time");
 
-        Brain.frontLineContoursEntry = visionTable.getEntry("Front Line Contours");
-        Brain.frontLineAreaEntry = visionTable.getEntry("Front Line Area");
-        Brain.frontLineAngleEntry = visionTable.getEntry("Front Line Angle");
-        Brain.frontLineXcenterEntry = visionTable.getEntry("Front Line Center X");
-        Brain.frontLineYcenterEntry = visionTable.getEntry("Front Line Center Y");
-        Brain.frontPiTimeEntry = visionTable.getEntry("Front Pi Time");
+        NetworkTable leftCameraTable = ntinst.getTable("Shuffleboard/Vision/Left Camera");
+        Brain.leftLineContoursEntry = leftCameraTable.getEntry("Left Line Contours");
+        Brain.leftLineAreaEntry = leftCameraTable.getEntry("Left Line Area");
+        Brain.leftLineAngleEntry = leftCameraTable.getEntry("Left Line Angle");
+        Brain.leftLineXcenterEntry = leftCameraTable.getEntry("Left Line Center X");
+        Brain.leftLineYcenterEntry = leftCameraTable.getEntry("Left Line Center Y");
+        Brain.leftPiTimeEntry = leftCameraTable.getEntry("Left Pi Time");
 
-        Brain.leftLineContoursEntry = visionTable.getEntry("Left Line Contours");
-        Brain.leftLineAreaEntry = visionTable.getEntry("Left Line Area");
-        Brain.leftLineAngleEntry = visionTable.getEntry("Left Line Angle");
-        Brain.leftLineXcenterEntry = visionTable.getEntry("Left Line Center X");
-        Brain.leftLineYcenterEntry = visionTable.getEntry("Left Line Center Y");
-        Brain.leftPiTimeEntry = visionTable.getEntry("Left Pi Time");
-
-        Brain.rightLineContoursEntry = visionTable.getEntry("Right Line Contours");
-        Brain.rightLineAreaEntry = visionTable.getEntry("Right Line Area");
-        Brain.rightLineAngleEntry = visionTable.getEntry("Right Line Angle");
-        Brain.rightLineXcenterEntry = visionTable.getEntry("Right Line Center X");
-        Brain.rightLineYcenterEntry = visionTable.getEntry("Right Line Center Y");
-        Brain.rightPiTimeEntry = visionTable.getEntry("Right Pi Time");
+        NetworkTable rightCameraTable = ntinst.getTable("Shuffleboard/Vision/Right Camera");
+        Brain.rightLineContoursEntry = rightCameraTable.getEntry("Right Line Contours");
+        Brain.rightLineAreaEntry = rightCameraTable.getEntry("Right Line Area");
+        Brain.rightLineAngleEntry = rightCameraTable.getEntry("Right Line Angle");
+        Brain.rightLineXcenterEntry = rightCameraTable.getEntry("Right Line Center X");
+        Brain.rightLineYcenterEntry = rightCameraTable.getEntry("Right Line Center Y");
+        Brain.rightPiTimeEntry = rightCameraTable.getEntry("Right Pi Time");
 
         // start cameras
         List<VideoSource> cameras = new ArrayList<>();
