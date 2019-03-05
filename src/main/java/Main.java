@@ -633,7 +633,14 @@ public final class Main {
 
             ArrayList<MatOfPoint> output = pipeline.filterContoursOutput();
             int outputSize = output.size();
-            Brain.setFrontLineContours(outputSize);
+            switch (camPosition) {
+                case FRONT:
+                    Brain.setFrontLineContours(outputSize);
+                case LEFT:
+                    Brain.setLeftLineContours(outputSize);
+                case RIGHT:
+                    Brain.setRightLineContours(outputSize);
+            }
             // We can only work with one contour
             if (outputSize == 1) {
                 String camName = cam.getName();
