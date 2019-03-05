@@ -202,6 +202,9 @@ public final class Main {
             server.setConfigJson(gson.toJson(config.streamConfig));
         }
 
+        camera.setBrightness(50);
+        camera.setExposureManual(50);
+
         return camera;
     }
 
@@ -435,6 +438,14 @@ public final class Main {
         public static double rightLineYcenterDefault = 0;
         public static double rightPiTime = 0;
 
+        // Vision - Rear Line Detector
+        public static double rearLineContoursDefault = 0;
+        public static double rearLineAreaDefault = 0;
+        public static double rearLineAngleDefault = 0;
+        public static double rearLineXcenterDefault = 0;
+        public static double rearLineYcenterDefault = 0;
+        public static double rearPiTime = 0;
+
         //---------------------//
         // NetworkTableEntries //
         //---------------------//
@@ -470,6 +481,14 @@ public final class Main {
         public static NetworkTableEntry rightLineXcenterEntry;
         public static NetworkTableEntry rightLineYcenterEntry;
         public static NetworkTableEntry rightPiTimeEntry;
+
+        // Vision - Rear Line Detector
+        public static NetworkTableEntry rearLineContoursEntry;
+        public static NetworkTableEntry rearLineAreaEntry;
+        public static NetworkTableEntry rearLineAngleEntry;
+        public static NetworkTableEntry rearLineXcenterEntry;
+        public static NetworkTableEntry rearLineYcenterEntry;
+        public static NetworkTableEntry rearPiTimeEntry;
 
         //---------//
         // Setters //
@@ -550,6 +569,31 @@ public final class Main {
             rightPiTimeEntry.setDouble(value);
         }
 
+        // Vision - Rear Line Detector
+        public static void setRearLineContours(double value) {
+            rearLineContoursEntry.setDouble(value);
+        }
+
+        public static void setRearLineArea(double value) {
+            rearLineAreaEntry.setDouble(value);
+        }
+
+        public static void setRearLineAngle(double value) {
+            rearLineAngleEntry.setDouble(value);
+        }
+
+        public static void setRearLineXcenter(double value) {
+            rearLineXcenterEntry.setDouble(value);
+        }
+
+        public static void setRearLineYcenter(double value) {
+            rearLineYcenterEntry.setDouble(value);
+        }
+
+        public static void setRearPiTime(double value) {
+            rearPiTimeEntry.setDouble(value);
+        }
+
         //---------//
         // Getters //
         //---------//
@@ -609,7 +653,7 @@ public final class Main {
     }
 
     public enum CameraPosition {
-        FRONT, LEFT, RIGHT
+        FRONT, LEFT, RIGHT, REAR
     }
 
     public static void startLineDetection(VideoSource cam, double minimumArea, CameraPosition camPosition) {
@@ -626,6 +670,8 @@ public final class Main {
                     Brain.setLeftPiTime(elapsedTime);
                 case RIGHT:
                     Brain.setRightPiTime(elapsedTime);
+                case REAR:
+                    Brain.setRearPiTime(elapsedTime);
             }
 
             ArrayList<MatOfPoint> output = pipeline.filterContoursOutput();
@@ -686,6 +732,11 @@ public final class Main {
                             Brain.setRightLineAngle(angle);
                             Brain.setRightLineXcenter(centerX);
                             Brain.setRightLineYcenter(centerY);
+                        case REAR:
+                            Brain.setRearLineArea(area);
+                            Brain.setRearLineAngle(angle);
+                            Brain.setRearLineXcenter(centerX);
+                            Brain.setRearLineYcenter(centerY);
                     }
                     System.out.println(elapsedTime + " : " + camName + " -> Line Detected!");
                 }
@@ -708,6 +759,11 @@ public final class Main {
                         Brain.setRightLineAngle(Brain.rightLineAngleDefault);
                         Brain.setRightLineXcenter(Brain.rightLineXcenterDefault);
                         Brain.setRightLineYcenter(Brain.rightLineYcenterDefault);
+                    case REAR:
+                        Brain.setRearLineArea(Brain.rearLineAreaDefault);
+                        Brain.setRearLineAngle(Brain.rearLineAngleDefault);
+                        Brain.setRearLineXcenter(Brain.rearLineXcenterDefault);
+                        Brain.setRearLineYcenter(Brain.rearLineYcenterDefault);
                 }
 
                 // TODO: consider checking all the contours, and if only one meets the minimum area requirements, use that
@@ -867,6 +923,13 @@ public final class Main {
         Brain.rightLineYcenterEntry = visionTable.getEntry("Right Line Center Y");
         Brain.rightPiTimeEntry = visionTable.getEntry("Right Pi Time");
 
+        Brain.rearLineContoursEntry = visionTable.getEntry("Rear Line Contours");
+        Brain.rearLineAreaEntry = visionTable.getEntry("Rear Line Area");
+        Brain.rearLineAngleEntry = visionTable.getEntry("Rear Line Angle");
+        Brain.rearLineXcenterEntry = visionTable.getEntry("Rear Line Center X");
+        Brain.rearLineYcenterEntry = visionTable.getEntry("Rear Line Center Y");
+        Brain.rearPiTimeEntry = visionTable.getEntry("Rear Pi Time");
+
         // start cameras
         List<VideoSource> cameras = new ArrayList<>();
         for (CameraConfig cameraConfig : cameraConfigs) {
@@ -881,6 +944,7 @@ public final class Main {
         startLineDetection(cameras.get(0), minimumArea, CameraPosition.FRONT);
         startLineDetection(cameras.get(1), minimumArea, CameraPosition.LEFT);
         startLineDetection(cameras.get(2), minimumArea, CameraPosition.RIGHT);
+        startLineDetection(cameras.get(3), minimumArea, CameraPosition.REAR);
 
         // start the distance sensor
         Pin echoPin = RaspiPin.GPIO_20; // PI4J custom numbering (pin 20)

@@ -4,15 +4,47 @@
     "cameras": [
         {
             "name": "Front Camera",
-            "path": "/dev/video0"
+            "path": "/dev/video0",
+            "width": 160,
+            "height": 120,
+            "pixel format": "mjepg",
+            "fps": 30,
+            "stream": {
+                "properties": []
+            }
         },
         {
             "name": "Left Camera",
-            "path": "/dev/video1"
+            "path": "/dev/video1",
+            "width": 160,
+            "height": 120,
+            "pixel format": "mjepg",
+            "fps": 30,
+            "stream": {
+                "properties": []
+            }
         },
         {
             "name": "Right Camera",
-            "path": "/dev/video2"
+            "path": "/dev/video2",
+            "width": 160,
+            "height": 120,
+            "pixel format": "mjepg",
+            "fps": 30,
+            "stream": {
+                "properties": []
+            }
+        },
+        {
+            "name": "Rear Camera",
+            "path": "/dev/video3",
+            "width": 160,
+            "height": 120,
+            "pixel format": "mjepg",
+            "fps": 30,
+            "stream": {
+                "properties": []
+            }
         }
     ]
 }
