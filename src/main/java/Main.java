@@ -202,8 +202,9 @@ public final class Main {
             server.setConfigJson(gson.toJson(config.streamConfig));
         }
 
+        camera.setFPS(30);
         camera.setBrightness(50);
-        camera.setExposureManual(50);
+        camera.setExposureManual(40);
 
         return camera;
     }
