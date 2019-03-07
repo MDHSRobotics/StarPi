@@ -416,6 +416,7 @@ public final class Main {
         public static double valueMaxDefault = 255;
 
         // Vision - Front Line Detector
+        public static String frontCameraNameDefault = "Front Camera";        
         public static double frontLineContoursDefault = 0;
         public static double frontLineAreaDefault = 0;
         public static double frontLineAngleDefault = 0;
@@ -424,6 +425,7 @@ public final class Main {
         public static double frontPiTime = 0;
 
         // Vision - Left Line Detector
+        public static String leftCameraNameDefault = "Left Camera";     
         public static double leftLineContoursDefault = 0;
         public static double leftLineAreaDefault = 0;
         public static double leftLineAngleDefault = 0;
@@ -432,6 +434,7 @@ public final class Main {
         public static double leftPiTime = 0;
 
         // Vision - Right Line Detector
+        public static String rightCameraNameDefault = "Right Camera";     
         public static double rightLineContoursDefault = 0;
         public static double rightLineAreaDefault = 0;
         public static double rightLineAngleDefault = 0;
@@ -452,6 +455,7 @@ public final class Main {
         public static NetworkTableEntry valueMaxEntry;
 
         // Vision - Front Line Detector
+        public static NetworkTableEntry frontCameraNameEntry;
         public static NetworkTableEntry frontLineContoursEntry;
         public static NetworkTableEntry frontLineAreaEntry;
         public static NetworkTableEntry frontLineAngleEntry;
@@ -460,6 +464,7 @@ public final class Main {
         public static NetworkTableEntry frontPiTimeEntry;
 
         // Vision - Left Line Detector
+        public static NetworkTableEntry leftCameraNameEntry;
         public static NetworkTableEntry leftLineContoursEntry;
         public static NetworkTableEntry leftLineAreaEntry;
         public static NetworkTableEntry leftLineAngleEntry;
@@ -468,6 +473,7 @@ public final class Main {
         public static NetworkTableEntry leftPiTimeEntry;
 
         // Vision - Right Line Detector
+        public static NetworkTableEntry rightCameraNameEntry;
         public static NetworkTableEntry rightLineContoursEntry;
         public static NetworkTableEntry rightLineAreaEntry;
         public static NetworkTableEntry rightLineAngleEntry;
@@ -480,6 +486,10 @@ public final class Main {
         //---------//
 
         // Vision - Front Line Detector
+        public static void setFrontCameraName(String value) {
+            frontCameraNameEntry.setString(value);
+        }
+
         public static void setFrontLineContours(double value) {
             frontLineContoursEntry.setDouble(value);
         }
@@ -505,6 +515,10 @@ public final class Main {
         }
 
         // Vision - Left Line Detector
+        public static void setLeftCameraName(String value) {
+            leftCameraNameEntry.setString(value);
+        }
+
         public static void setLeftLineContours(double value) {
             leftLineContoursEntry.setDouble(value);
         }
@@ -530,6 +544,10 @@ public final class Main {
         }
 
         // Vision - Right Line Detector
+        public static void setRightCameraName(String value) {
+            rightCameraNameEntry.setString(value);
+        }
+
         public static void setRightLineContours(double value) {
             rightLineContoursEntry.setDouble(value);
         }
@@ -625,10 +643,13 @@ public final class Main {
             double elapsedTime = piTimer.get();
             switch (camPosition) {
                 case FRONT:
+                    Brain.setFrontCameraName("Front");
                     Brain.setFrontPiTime(elapsedTime);
                 case LEFT:
+                    Brain.setFrontCameraName("Left");
                     Brain.setLeftPiTime(elapsedTime);
                 case RIGHT:
+                    Brain.setFrontCameraName("Right");
                     Brain.setRightPiTime(elapsedTime);
             }
 
@@ -645,7 +666,7 @@ public final class Main {
             // We can only work with one contour
             if (outputSize == 1) {
                 String camName = cam.getName();
-                System.out.println(elapsedTime + " : " + camName + " -> One contour identified, checking minimum size...");
+                // System.out.println(elapsedTime + " : " + camName + " -> One contour identified, checking minimum size...");
                 MatOfPoint contour = output.get(0);
 
                 // Get the rotated rectangle
@@ -857,6 +878,7 @@ public final class Main {
         Brain.valueMaxEntry = hsvTable.getEntry("Value Maximum");
 
         NetworkTable frontCameraTable = ntinst.getTable("Shuffleboard/Vision/Front Camera");
+        Brain.frontCameraNameEntry = frontCameraTable.getEntry("Front Camera Name");
         Brain.frontLineContoursEntry = frontCameraTable.getEntry("Front Line Contours");
         Brain.frontLineAreaEntry = frontCameraTable.getEntry("Front Line Area");
         Brain.frontLineAngleEntry = frontCameraTable.getEntry("Front Line Angle");
@@ -865,6 +887,7 @@ public final class Main {
         Brain.frontPiTimeEntry = frontCameraTable.getEntry("Front Pi Time");
 
         NetworkTable leftCameraTable = ntinst.getTable("Shuffleboard/Vision/Left Camera");
+        Brain.leftCameraNameEntry = leftCameraTable.getEntry("Left Camera Name");
         Brain.leftLineContoursEntry = leftCameraTable.getEntry("Left Line Contours");
         Brain.leftLineAreaEntry = leftCameraTable.getEntry("Left Line Area");
         Brain.leftLineAngleEntry = leftCameraTable.getEntry("Left Line Angle");
@@ -873,6 +896,7 @@ public final class Main {
         Brain.leftPiTimeEntry = leftCameraTable.getEntry("Left Pi Time");
 
         NetworkTable rightCameraTable = ntinst.getTable("Shuffleboard/Vision/Right Camera");
+        Brain.rightCameraNameEntry = rightCameraTable.getEntry("Right Camera Name");
         Brain.rightLineContoursEntry = rightCameraTable.getEntry("Right Line Contours");
         Brain.rightLineAreaEntry = rightCameraTable.getEntry("Right Line Area");
         Brain.rightLineAngleEntry = rightCameraTable.getEntry("Right Line Angle");
