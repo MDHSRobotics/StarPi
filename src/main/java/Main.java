@@ -529,7 +529,7 @@ public final class Main {
             leftPiTimeEntry.setDouble(value);
         }
 
-        // Vision - Left Line Detector
+        // Vision - Right Line Detector
         public static void setRightLineContours(double value) {
             rightLineContoursEntry.setDouble(value);
         }
