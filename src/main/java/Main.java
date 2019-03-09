@@ -309,7 +309,6 @@ public final class Main {
         Brain.valueMaxEntry = hsvTable.getEntry("Value Maximum");
 
         NetworkTable frontCameraTable = ntinst.getTable("Shuffleboard/Vision/Front Camera");
-        Brain.frontCameraNameEntry = frontCameraTable.getEntry("Front Camera Name");
         Brain.frontLineContoursEntry = frontCameraTable.getEntry("Front Line Contours");
         Brain.frontLineAreaEntry = frontCameraTable.getEntry("Front Line Area");
         Brain.frontLineAngleEntry = frontCameraTable.getEntry("Front Line Angle");
@@ -317,7 +316,6 @@ public final class Main {
         Brain.frontLineYcenterEntry = frontCameraTable.getEntry("Front Line Center Y");
 
         NetworkTable leftCameraTable = ntinst.getTable("Shuffleboard/Vision/Left Camera");
-        Brain.leftCameraNameEntry = leftCameraTable.getEntry("Left Camera Name");
         Brain.leftLineContoursEntry = leftCameraTable.getEntry("Left Line Contours");
         Brain.leftLineAreaEntry = leftCameraTable.getEntry("Left Line Area");
         Brain.leftLineAngleEntry = leftCameraTable.getEntry("Left Line Angle");
@@ -325,7 +323,6 @@ public final class Main {
         Brain.leftLineYcenterEntry = leftCameraTable.getEntry("Left Line Center Y");
 
         NetworkTable rightCameraTable = ntinst.getTable("Shuffleboard/Vision/Right Camera");
-        Brain.rightCameraNameEntry = rightCameraTable.getEntry("Right Camera Name");
         Brain.rightLineContoursEntry = rightCameraTable.getEntry("Right Line Contours");
         Brain.rightLineAreaEntry = rightCameraTable.getEntry("Right Line Area");
         Brain.rightLineAngleEntry = rightCameraTable.getEntry("Right Line Angle");

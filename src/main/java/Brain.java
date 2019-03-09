@@ -17,7 +17,6 @@ public class Brain {
     public static double valueMaxDefault = 255;
 
     // Vision - Front Line Detector
-    public static String frontCameraNameDefault = "Front Camera";        
     public static double frontLineContoursDefault = 0;
     public static double frontLineAreaDefault = 0;
     public static double frontLineAngleDefault = 0;
@@ -25,7 +24,6 @@ public class Brain {
     public static double frontLineYcenterDefault = 0;
 
     // Vision - Left Line Detector
-    public static String leftCameraNameDefault = "Left Camera";     
     public static double leftLineContoursDefault = 0;
     public static double leftLineAreaDefault = 0;
     public static double leftLineAngleDefault = 0;
@@ -33,7 +31,6 @@ public class Brain {
     public static double leftLineYcenterDefault = 0;
 
     // Vision - Right Line Detector
-    public static String rightCameraNameDefault = "Right Camera";     
     public static double rightLineContoursDefault = 0;
     public static double rightLineAreaDefault = 0;
     public static double rightLineAngleDefault = 0;
@@ -53,7 +50,6 @@ public class Brain {
     public static NetworkTableEntry valueMaxEntry;
 
     // Vision - Front Line Detector
-    public static NetworkTableEntry frontCameraNameEntry;
     public static NetworkTableEntry frontLineContoursEntry;
     public static NetworkTableEntry frontLineAreaEntry;
     public static NetworkTableEntry frontLineAngleEntry;
@@ -61,7 +57,6 @@ public class Brain {
     public static NetworkTableEntry frontLineYcenterEntry;
 
     // Vision - Left Line Detector
-    public static NetworkTableEntry leftCameraNameEntry;
     public static NetworkTableEntry leftLineContoursEntry;
     public static NetworkTableEntry leftLineAreaEntry;
     public static NetworkTableEntry leftLineAngleEntry;
@@ -69,7 +64,6 @@ public class Brain {
     public static NetworkTableEntry leftLineYcenterEntry;
 
     // Vision - Right Line Detector
-    public static NetworkTableEntry rightCameraNameEntry;
     public static NetworkTableEntry rightLineContoursEntry;
     public static NetworkTableEntry rightLineAreaEntry;
     public static NetworkTableEntry rightLineAngleEntry;
@@ -81,10 +75,6 @@ public class Brain {
     //---------//
 
     // Vision - Front Line Detector
-    public static void setFrontCameraName(String value) {
-        frontCameraNameEntry.setString(value);
-    }
-
     public static void setFrontLineContours(double value) {
         frontLineContoursEntry.setDouble(value);
     }
@@ -106,10 +96,6 @@ public class Brain {
     }
 
     // Vision - Left Line Detector
-    public static void setLeftCameraName(String value) {
-        leftCameraNameEntry.setString(value);
-    }
-
     public static void setLeftLineContours(double value) {
         leftLineContoursEntry.setDouble(value);
     }
@@ -131,10 +117,6 @@ public class Brain {
     }
 
     // Vision - Right Line Detector
-    public static void setRightCameraName(String value) {
-        rightCameraNameEntry.setString(value);
-    }
-
     public static void setRightLineContours(double value) {
         rightLineContoursEntry.setDouble(value);
     }
