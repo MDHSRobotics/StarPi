@@ -62,10 +62,13 @@ public class Vision {
             switch (camPosition) {
                 case FRONT:
                     Brain.setFrontLineContours(outputSize);
+                    break;
                 case LEFT:
                     Brain.setLeftLineContours(outputSize);
+                    break;
                 case RIGHT:
                     Brain.setRightLineContours(outputSize);
+                    break;
             }
             // We can only work with one contour
             if (outputSize == 1) {
@@ -111,16 +114,19 @@ public class Vision {
                             Brain.setFrontLineAngle(angle);
                             Brain.setFrontLineXcenter(centerX);
                             Brain.setFrontLineYcenter(centerY);
+                            break;
                         case LEFT:
                             Brain.setLeftLineArea(area);
                             Brain.setLeftLineAngle(angle);
                             Brain.setLeftLineXcenter(centerX);
                             Brain.setLeftLineYcenter(centerY);
+                            break;
                         case RIGHT:
                             Brain.setRightLineArea(area);
                             Brain.setRightLineAngle(angle);
                             Brain.setRightLineXcenter(centerX);
                             Brain.setRightLineYcenter(centerY);
+                            break;
                     }
                     String camName = cam.getName();
                     double elapsedTime = piTimer.get();
@@ -135,16 +141,19 @@ public class Vision {
                         Brain.setFrontLineAngle(Brain.frontLineAngleDefault);
                         Brain.setFrontLineXcenter(Brain.frontLineXcenterDefault);
                         Brain.setFrontLineYcenter(Brain.frontLineYcenterDefault);
+                        break;
                     case LEFT:
                         Brain.setLeftLineArea(Brain.leftLineAreaDefault);
                         Brain.setLeftLineAngle(Brain.leftLineAngleDefault);
                         Brain.setLeftLineXcenter(Brain.leftLineXcenterDefault);
                         Brain.setLeftLineYcenter(Brain.leftLineYcenterDefault);
+                        break;
                     case RIGHT:
                         Brain.setRightLineArea(Brain.rightLineAreaDefault);
                         Brain.setRightLineAngle(Brain.rightLineAngleDefault);
                         Brain.setRightLineXcenter(Brain.rightLineXcenterDefault);
                         Brain.setRightLineYcenter(Brain.rightLineYcenterDefault);
+                        break;
                 }
 
                 // TODO: consider checking all the contours, and if only one meets the minimum area requirements, use that
