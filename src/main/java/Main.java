@@ -255,7 +255,7 @@ public final class Main {
 
             // Step Filter_Contours0:
             ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-            double filterContoursMinArea = 0.0;
+            double filterContoursMinArea = 100.0;
             double filterContoursMinPerimeter = 0.0;
             double filterContoursMinWidth = 20.0;
             double filterContoursMaxWidth = 1000.0;
@@ -422,7 +422,6 @@ public final class Main {
         public static double frontLineAngleDefault = 0;
         public static double frontLineXcenterDefault = 0;
         public static double frontLineYcenterDefault = 0;
-        public static double frontPiTime = 0;
 
         // Vision - Left Line Detector
         public static String leftCameraNameDefault = "Left Camera";     
@@ -431,7 +430,6 @@ public final class Main {
         public static double leftLineAngleDefault = 0;
         public static double leftLineXcenterDefault = 0;
         public static double leftLineYcenterDefault = 0;
-        public static double leftPiTime = 0;
 
         // Vision - Right Line Detector
         public static String rightCameraNameDefault = "Right Camera";     
@@ -440,7 +438,6 @@ public final class Main {
         public static double rightLineAngleDefault = 0;
         public static double rightLineXcenterDefault = 0;
         public static double rightLineYcenterDefault = 0;
-        public static double rightPiTime = 0;
 
         //---------------------//
         // NetworkTableEntries //
@@ -461,7 +458,6 @@ public final class Main {
         public static NetworkTableEntry frontLineAngleEntry;
         public static NetworkTableEntry frontLineXcenterEntry;
         public static NetworkTableEntry frontLineYcenterEntry;
-        public static NetworkTableEntry frontPiTimeEntry;
 
         // Vision - Left Line Detector
         public static NetworkTableEntry leftCameraNameEntry;
@@ -470,7 +466,6 @@ public final class Main {
         public static NetworkTableEntry leftLineAngleEntry;
         public static NetworkTableEntry leftLineXcenterEntry;
         public static NetworkTableEntry leftLineYcenterEntry;
-        public static NetworkTableEntry leftPiTimeEntry;
 
         // Vision - Right Line Detector
         public static NetworkTableEntry rightCameraNameEntry;
@@ -479,7 +474,6 @@ public final class Main {
         public static NetworkTableEntry rightLineAngleEntry;
         public static NetworkTableEntry rightLineXcenterEntry;
         public static NetworkTableEntry rightLineYcenterEntry;
-        public static NetworkTableEntry rightPiTimeEntry;
 
         //---------//
         // Setters //
@@ -510,10 +504,6 @@ public final class Main {
             frontLineYcenterEntry.setDouble(value);
         }
 
-        public static void setFrontPiTime(double value) {
-            frontPiTimeEntry.setDouble(value);
-        }
-
         // Vision - Left Line Detector
         public static void setLeftCameraName(String value) {
             leftCameraNameEntry.setString(value);
@@ -539,10 +529,6 @@ public final class Main {
             leftLineYcenterEntry.setDouble(value);
         }
 
-        public static void setLeftPiTime(double value) {
-            leftPiTimeEntry.setDouble(value);
-        }
-
         // Vision - Right Line Detector
         public static void setRightCameraName(String value) {
             rightCameraNameEntry.setString(value);
@@ -566,10 +552,6 @@ public final class Main {
 
         public static void setRightLineYcenter(double value) {
             rightLineYcenterEntry.setDouble(value);
-        }
-
-        public static void setRightPiTime(double value) {
-            rightPiTimeEntry.setDouble(value);
         }
 
         //---------//
@@ -605,8 +587,8 @@ public final class Main {
     public enum Quadrant {
         UPPERLEFT, UPPERRIGHT, LOWERLEFT, LOWERRIGHT;
 
-        public static int totalHeight = 160;
-        public static int totalWidth = 120;
+        public static int totalHeight = 320;
+        public static int totalWidth = 240;
 
         public static Quadrant getQuadrant(double x, double y) {
             boolean isUpper = (y <= totalHeight / 2);
@@ -640,17 +622,14 @@ public final class Main {
         piTimer.start();
 
         VisionThread visionThread = new VisionThread(cam, new LinePipeline(), pipeline -> {
-            double elapsedTime = piTimer.get();
+            String camName = cam.getName();
             switch (camPosition) {
                 case FRONT:
-                    Brain.setFrontCameraName("Front");
-                    Brain.setFrontPiTime(elapsedTime);
+                    Brain.setFrontCameraName(camName);
                 case LEFT:
-                    Brain.setFrontCameraName("Left");
-                    Brain.setLeftPiTime(elapsedTime);
+                    Brain.setLeftCameraName(camName);
                 case RIGHT:
-                    Brain.setFrontCameraName("Right");
-                    Brain.setRightPiTime(elapsedTime);
+                    Brain.setRightCameraName(camName);
             }
 
             ArrayList<MatOfPoint> output = pipeline.filterContoursOutput();
@@ -665,7 +644,6 @@ public final class Main {
             }
             // We can only work with one contour
             if (outputSize == 1) {
-                String camName = cam.getName();
                 // System.out.println(elapsedTime + " : " + camName + " -> One contour identified, checking minimum size...");
                 MatOfPoint contour = output.get(0);
 
@@ -719,7 +697,8 @@ public final class Main {
                             Brain.setRightLineXcenter(centerX);
                             Brain.setRightLineYcenter(centerY);
                     }
-                    System.out.println(elapsedTime + " : " + camName + " -> Line Detected!");
+                    double elapsedTime = piTimer.get();
+                    System.out.println(camName + " -> Line Detected! : " + elapsedTime);
                 }
             }
             else {
@@ -884,7 +863,6 @@ public final class Main {
         Brain.frontLineAngleEntry = frontCameraTable.getEntry("Front Line Angle");
         Brain.frontLineXcenterEntry = frontCameraTable.getEntry("Front Line Center X");
         Brain.frontLineYcenterEntry = frontCameraTable.getEntry("Front Line Center Y");
-        Brain.frontPiTimeEntry = frontCameraTable.getEntry("Front Pi Time");
 
         NetworkTable leftCameraTable = ntinst.getTable("Shuffleboard/Vision/Left Camera");
         Brain.leftCameraNameEntry = leftCameraTable.getEntry("Left Camera Name");
@@ -893,7 +871,6 @@ public final class Main {
         Brain.leftLineAngleEntry = leftCameraTable.getEntry("Left Line Angle");
         Brain.leftLineXcenterEntry = leftCameraTable.getEntry("Left Line Center X");
         Brain.leftLineYcenterEntry = leftCameraTable.getEntry("Left Line Center Y");
-        Brain.leftPiTimeEntry = leftCameraTable.getEntry("Left Pi Time");
 
         NetworkTable rightCameraTable = ntinst.getTable("Shuffleboard/Vision/Right Camera");
         Brain.rightCameraNameEntry = rightCameraTable.getEntry("Right Camera Name");
@@ -902,7 +879,6 @@ public final class Main {
         Brain.rightLineAngleEntry = rightCameraTable.getEntry("Right Line Angle");
         Brain.rightLineXcenterEntry = rightCameraTable.getEntry("Right Line Center X");
         Brain.rightLineYcenterEntry = rightCameraTable.getEntry("Right Line Center Y");
-        Brain.rightPiTimeEntry = rightCameraTable.getEntry("Right Pi Time");
 
         // start cameras
         List<VideoSource> cameras = new ArrayList<>();
