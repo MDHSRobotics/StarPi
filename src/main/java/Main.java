@@ -275,8 +275,6 @@ public final class Main {
         return server;
     }
 
-
-
     /**
      * Main.
      */
@@ -342,12 +340,12 @@ public final class Main {
         // start image processing on camera 0 if present
         int numOfCameras = cameras.size();
         System.out.println("Number of cameras: " + numOfCameras);
-        Vision frontVis = new Vision();
-        Vision leftVis = new Vision();
-        Vision rightVis = new Vision();
-        frontVis.startLineDetection(cameras.get(0), Vision.CameraPosition.FRONT);
-        leftVis.startLineDetection(cameras.get(1), Vision.CameraPosition.LEFT);
-        rightVis.startLineDetection(cameras.get(2), Vision.CameraPosition.RIGHT);
+        Vision frontVis = new Vision(Vision.CameraPosition.FRONT);
+        Vision leftVis = new Vision(Vision.CameraPosition.LEFT);
+        Vision rightVis = new Vision(Vision.CameraPosition.RIGHT);
+        frontVis.startLineDetection(cameras.get(0));
+        leftVis.startLineDetection(cameras.get(1));
+        rightVis.startLineDetection(cameras.get(2));
 
         // TODO: Need to figure out how to install this on the raspberry pi:
         // http://wiringpi.com/download-and-install/

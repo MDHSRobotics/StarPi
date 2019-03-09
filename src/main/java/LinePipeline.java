@@ -29,8 +29,8 @@ public class LinePipeline implements VisionPipeline {
     /**
      * This is the primary method that runs the entire pipeline and updates the outputs.
      */
-        @Override
-        public void process(Mat source0) {
+    @Override
+    public void process(Mat source0) {
         // Step HSV_Threshold0:
         Mat hsvThresholdInput = source0;
                 
@@ -65,19 +65,19 @@ public class LinePipeline implements VisionPipeline {
         double filterContoursMinVertices = 0.0;
         double filterContoursMinRatio = 0.0;
         double filterContoursMaxRatio = 1000.0;
-                filterContours(filterContoursContours,
-                                filterContoursMinArea,
-                                filterContoursMinPerimeter,
-                                filterContoursMinWidth,
-                                filterContoursMaxWidth,
-                                filterContoursMinHeight,
-                                filterContoursMaxHeight,
-                                filterContoursSolidity,
-                                filterContoursMaxVertices,
-                                filterContoursMinVertices,
-                                filterContoursMinRatio,
-                                filterContoursMaxRatio,
-                                filterContoursOutput);
+        filterContours(filterContoursContours,
+                        filterContoursMinArea,
+                        filterContoursMinPerimeter,
+                        filterContoursMinWidth,
+                        filterContoursMaxWidth,
+                        filterContoursMinHeight,
+                        filterContoursMaxHeight,
+                        filterContoursSolidity,
+                        filterContoursMaxVertices,
+                        filterContoursMinVertices,
+                        filterContoursMinRatio,
+                        filterContoursMaxRatio,
+                        filterContoursOutput);
     }
 
     /**
@@ -103,7 +103,6 @@ public class LinePipeline implements VisionPipeline {
     public ArrayList<MatOfPoint> filterContoursOutput() {
         return filterContoursOutput;
     }
-
 
     /**
      * Segment an image based on hue, saturation, and value ranges.
@@ -158,19 +157,19 @@ public class LinePipeline implements VisionPipeline {
      * @param minRatio minimum ratio of width to height
      * @param maxRatio maximum ratio of width to height
      */
-        private void filterContours(List<MatOfPoint> inputContours,
-                                    double minArea,
-                                    double minPerimeter,
-                                    double minWidth,
-                                    double maxWidth,
-                                    double minHeight,
-                                    double maxHeight,
-                                    double[] solidity,
-                                    double maxVertexCount,
-                                    double minVertexCount,
-                                    double minRatio,
-                                    double maxRatio,
-                                    List<MatOfPoint> output) {
+    private void filterContours(List<MatOfPoint> inputContours,
+                                double minArea,
+                                double minPerimeter,
+                                double minWidth,
+                                double maxWidth,
+                                double minHeight,
+                                double maxHeight,
+                                double[] solidity,
+                                double maxVertexCount,
+                                double minVertexCount,
+                                double minRatio,
+                                double maxRatio,
+                                List<MatOfPoint> output) {
         final MatOfInt hull = new MatOfInt();
         output.clear();
         //operation

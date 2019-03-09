@@ -43,7 +43,13 @@ public class Vision {
         }
     }
 
-    public void startLineDetection(VideoSource cam, CameraPosition camPosition) {
+    public CameraPosition camPosition;
+
+    public Vision(CameraPosition position) {
+        this.camPosition = position;
+    }
+
+    public void startLineDetection(VideoSource cam) {
         Timer piTimer = new Timer();
         piTimer.reset();
         piTimer.start();
