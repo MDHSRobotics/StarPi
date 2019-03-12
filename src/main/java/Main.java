@@ -340,7 +340,7 @@ public final class Main {
             startSwitchedCamera(config);
         }
 
-        // start image processing on camera 0 if present
+        // start image processing on cameras 0, 1, and 2 if present
         int numOfCameras = cameras.size();
         System.out.println("Number of cameras: " + numOfCameras);
         Vision frontVis = new Vision(Vision.CameraPosition.FRONT);
@@ -369,7 +369,8 @@ public final class Main {
             }
             try {
                 Thread.sleep(10000);
-            } catch (InterruptedException ex) {
+            }
+            catch (InterruptedException ex) {
                 return;
             }
         }
