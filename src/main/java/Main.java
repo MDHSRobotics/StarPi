@@ -12,6 +12,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.RaspiPin;
+
 import edu.wpi.cscore.MjpegServer;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSource;
@@ -347,22 +350,23 @@ public final class Main {
         leftVis.startLineDetection(cameras.get(1));
         rightVis.startLineDetection(cameras.get(2));
 
-        // TODO: Need to figure out how to install this on the raspberry pi:
-        // http://wiringpi.com/download-and-install/
-
-        // // start the distance sensor
-        // Pin echoPin = RaspiPin.GPIO_20; // PI4J custom numbering (pin 20)
-        // Pin trigPin = RaspiPin.GPIO_18; // PI4J custom numbering (pin 18)
-        // DistanceMonitor monitor = new DistanceMonitor( echoPin, trigPin );
+        // start the distance sensor
+        // https://www.techcoil.com/blog/helpful-gpio-pinout-resources-that-you-can-reference-while-connecting-sensors-to-your-raspberry-pi-3/
+        // https://pinout.xyz/pinout/wiringpi
+        // https://tutorials-raspberrypi.com/raspberry-pi-ultrasonic-sensor-hc-sr04/
+        // https://www.modmypi.com/blog/hc-sr04-ultrasonic-range-sensor-on-the-raspberry-pi
+        Pin echoPin = RaspiPin.GPIO_20; // PI4J custom numbering (pin 20)
+        Pin trigPin = RaspiPin.GPIO_18; // PI4J custom numbering (pin 18)
+        DistanceMonitor monitor = new DistanceMonitor(echoPin, trigPin);
 
         // loop forever
         for (;;) {
-            // try {
-            //     System.out.printf( "%1$d,%2$.3f%n", System.currentTimeMillis(), monitor.measureDistance() );
-            // }
-            // catch( TimeoutException e ) {
-            //     System.err.println( e );
-            // }
+            try {
+                System.out.printf( "%1$d,%2$.3f%n", System.currentTimeMillis(), monitor.measureDistance() );
+            }
+            catch( TimeoutException e ) {
+                System.err.println( e );
+            }
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException ex) {

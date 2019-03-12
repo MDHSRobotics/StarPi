@@ -20,9 +20,9 @@ public class DistanceMonitor {
     private final GpioPinDigitalInput echoPin;
     private final GpioPinDigitalOutput trigPin;
             
-    private DistanceMonitor( Pin echoPin, Pin trigPin ) {
-        this.echoPin = gpio.provisionDigitalInputPin( echoPin );
-        this.trigPin = gpio.provisionDigitalOutputPin( trigPin );
+    public DistanceMonitor(Pin echoPin, Pin trigPin) {
+        this.echoPin = gpio.provisionDigitalInputPin(echoPin);
+        this.trigPin = gpio.provisionDigitalOutputPin(trigPin);
         this.trigPin.low();
     }
     
@@ -36,7 +36,7 @@ public class DistanceMonitor {
         this.waitForSignal();
         long duration = this.measureSignal();
         
-        return duration * SOUND_SPEED / ( 2 * 10000 );
+        return duration * SOUND_SPEED / (2 * 10000);
     }
 
     /**
@@ -45,9 +45,10 @@ public class DistanceMonitor {
     private void triggerSensor() {
         try {
             this.trigPin.high();
-            Thread.sleep( 0, TRIG_DURATION_IN_MICROS * 1000 );
+            Thread.sleep(0, TRIG_DURATION_IN_MICROS * 1000);
             this.trigPin.low();
-        } catch (InterruptedException ex) {
+        }
+        catch (InterruptedException ex) {
             System.err.println( "Interrupt during trigger" );
         }
     }
@@ -60,11 +61,11 @@ public class DistanceMonitor {
     private void waitForSignal() throws TimeoutException {
         int countdown = TIMEOUT;
         
-        while( this.echoPin.isLow() && countdown > 0 ) {
+        while (this.echoPin.isLow() && countdown > 0) {
             countdown--;
         }
         
-        if( countdown <= 0 ) {
+        if (countdown <= 0) {
             throw new TimeoutException( "Timeout waiting for signal start" );
         }
     }
@@ -76,16 +77,16 @@ public class DistanceMonitor {
     private long measureSignal() throws TimeoutException {
         int countdown = TIMEOUT;
         long start = System.nanoTime();
-        while( this.echoPin.isHigh() && countdown > 0 ) {
+        while (this.echoPin.isHigh() && countdown > 0) {
             countdown--;
         }
         long end = System.nanoTime();
         
-        if( countdown <= 0 ) {
-            throw new TimeoutException( "Timeout waiting for signal end" );
+        if (countdown <= 0) {
+            throw new TimeoutException("Timeout waiting for signal end");
         }
         
-        return (long)Math.ceil( ( end - start ) / 1000.0 );  // Return micro seconds
+        return (long)Math.ceil((end - start) / 1000.0);  // Return micro seconds
     }
 
 }
