@@ -362,10 +362,10 @@ public final class Main {
         // loop forever
         for (;;) {
             try {
-                System.out.printf( "%1$d,%2$.3f%n", System.currentTimeMillis(), monitor.measureDistance() );
+                System.out.printf("%1$d,%2$.3f%n", System.currentTimeMillis(), monitor.measureDistance());
             }
-            catch( TimeoutException e ) {
-                System.err.println( e );
+            catch (TimeoutException e) {
+                System.err.println(e);
             }
             try {
                 Thread.sleep(10000);
