@@ -355,18 +355,18 @@ public final class Main {
         // https://pinout.xyz/pinout/wiringpi
         // https://tutorials-raspberrypi.com/raspberry-pi-ultrasonic-sensor-hc-sr04/
         // https://www.modmypi.com/blog/hc-sr04-ultrasonic-range-sensor-on-the-raspberry-pi
-        Pin echoPin = RaspiPin.GPIO_20; // PI4J custom numbering (pin 20)
-        Pin trigPin = RaspiPin.GPIO_18; // PI4J custom numbering (pin 18)
-        DistanceMonitor monitor = new DistanceMonitor(echoPin, trigPin);
+        // Pin echoPin = RaspiPin.GPIO_05; // PI4J custom numbering (pin 20)
+        // Pin trigPin = RaspiPin.GPIO_04; // PI4J custom numbering (pin 18)
+        // DistanceMonitor monitor = new DistanceMonitor(echoPin, trigPin);
 
         // loop forever
         for (;;) {
-            try {
-                System.out.printf("%1$d,%2$.3f%n", System.currentTimeMillis(), monitor.measureDistance());
-            }
-            catch (TimeoutException e) {
-                System.err.println(e);
-            }
+            // try {
+            //     System.out.printf("%1$d,%2$.3f%n", System.currentTimeMillis(), monitor.measureDistance());
+            // }
+            // catch (TimeoutException e) {
+            //     System.err.println("ERORREWARRAWEF GREGFj'peargjpoaggo: " + e);
+            // }
             try {
                 Thread.sleep(10000);
             }
