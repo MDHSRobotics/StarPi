@@ -12,10 +12,10 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch)-Main<SpacePi>",
+            "name": "Debug (Launch)-Main<StarPi>",
             "request": "launch",
             "mainClass": "Main",
-            "projectName": "SpacePi"
+            "projectName": "StarPi"
         }
     ]
 }

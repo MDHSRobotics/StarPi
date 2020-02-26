@@ -1,2 +1,2 @@
 #!/bin/sh
-cp build/libs/SpacePi-all.jar runCamera /home/pi
+cp build/libs/StarPi-all.jar runCamera /home/pi
