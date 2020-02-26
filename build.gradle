@@ -22,7 +22,7 @@ dependencies {
     compile name: 'cscore'
     compile name: 'junit'
     compile name: 'ntcore'
-    compile name: 'opencv-347'
+    compile name: 'opencv-344'
     compile name: 'pi4j-core'
     compile name: 'pi4j-device'
     compile name: 'pi4j-example'
